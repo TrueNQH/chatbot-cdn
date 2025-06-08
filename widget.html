@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: #fff;
+    }
+
+    #chatbox {
+      height: 420px;
+      overflow-y: auto;
+      padding: 15px;
+      background: #ffffff;
+      border-radius: 12px 12px 0 0;
+      box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+    }
+
+    .message {
+      margin: 10px 0;
+      padding: 10px 14px;
+      border-radius: 16px;
+      max-width: 80%;
+      display: inline-block;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .user {
+      background: #f0f0f0;
+      color: #333;
+      float: right;
+      clear: both;
+      text-align: right;
+    }
+
+    .bot {
+      background: #be1e2d;
+      color: white;
+      float: left;
+      clear: both;
+      text-align: left;
+    }
+
+    #inputArea {
+      display: flex;
+      padding: 12px;
+      border-top: 1px solid #ddd;
+      background: #fff;
+      border-radius: 0 0 12px 12px;
+    }
+
+    #msgInput {
+      flex: 1;
+      padding: 10px 12px;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    button {
+      margin-left: 10px;
+      padding: 10px 16px;
+      background-color: #be1e2d;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #a11623;
+    }
+  </style>
+</head>
+<body>
+  <div id="chatbox"></div>
+  <div id="inputArea">
+    <input id="msgInput" placeholder="Nhập tin nhắn..." />
+    <button onclick="sendMessage()">Gửi</button>
+  </div>
+
+  <script>
+    const chatbox = document.getElementById("chatbox");
+    const msgInput = document.getElementById("msgInput");
+    const url = "https://dc99-2402-800-6205-55eb-dd6d-3b20-1139-431.ngrok-free.app";
+    let sessionId = null;
+
+    async function sendMessage() {
+      const msg = msgInput.value.trim();
+      if (!msg) return;
+
+      // Hiển thị tin nhắn người dùng
+      chatbox.innerHTML += `<div class="message user">${msg}</div>`;
+      msgInput.value = "";
+      chatbox.scrollTop = chatbox.scrollHeight;
+
+      try {
+        const res = await fetch(url + "/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            query: msg,
+            session_id: sessionId || null
+          })
+        });
+
+        const data = await res.json();
+        const reply = data.response || "Xin lỗi, tôi chưa hiểu.";
+        sessionId = data.session_id || sessionId;
+
+        chatbox.innerHTML += `<div class="message bot">${reply}</div>`;
+      } catch (err) {
+        chatbox.innerHTML += `<div class="message bot">⚠️ Không thể kết nối tới server.</div>`;
+      }
+
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
+
+    msgInput.addEventListener("keypress", e => {
+      if (e.key === "Enter") sendMessage();
+    });
+  </script>
+</body>
+</html>
