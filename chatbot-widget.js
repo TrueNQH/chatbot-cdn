@@ -22,7 +22,7 @@
   
     // Tạo iframe chatbot nhưng ẩn trước
     const iframe = document.createElement("iframe");
-    iframe.src = "https://trueNQH.github.io/chatbot-cdn@d4a16c1/widget.html"; // 🛠 Đổi link nếu cần
+    iframe.src = "https://truenqh.github.io/chatbot-cdn/widget.html"; // 🛠 Đổi link nếu cần
     iframe.style = `
       position: fixed;
       bottom: 90px;
