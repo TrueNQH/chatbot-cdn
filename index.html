@@ -92,7 +92,27 @@
     const msgInput = document.getElementById("msgInput");
     const url = "https://dc99-2402-800-6205-55eb-dd6d-3b20-1139-431.ngrok-free.app";
     let sessionId = null;
+    window.addEventListener("DOMContentLoaded", () => {
+  const welcomeMsg = "👋 Di Dộng Việt xin chào! Tôi có thể giúp gì cho bạn hôm nay?";
+  const suggestions = ["📱 Tôi muốn mua iPhone", "💡 Giới thiệu sản phẩm", "🛒 Hỏi về chương trình khuyến mãi"];
 
+  chatbox.innerHTML += `<div class="message bot">${welcomeMsg}</div>`;
+
+  suggestions.forEach(suggestion => {
+    const suggestionBtn = document.createElement("div");
+    suggestionBtn.textContent = suggestion;
+    suggestionBtn.className = "message user";
+    suggestionBtn.style.cursor = "pointer";
+    suggestionBtn.style.opacity = "0.8";
+    suggestionBtn.onclick = () => {
+      msgInput.value = suggestion.replace(/^.+?\s/, ""); // bỏ emoji nếu có
+      sendMessage();
+    };
+    chatbox.appendChild(suggestionBtn);
+  });
+
+  chatbox.scrollTop = chatbox.scrollHeight;
+});
     async function sendMessage() {
       const msg = msgInput.value.trim();
       if (!msg) return;
