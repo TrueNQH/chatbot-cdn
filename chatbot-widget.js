@@ -1,7 +1,7 @@
 (function () {
     // Tạo nút tròn
     const button = document.createElement("div");
-    button.innerHTML = `<img src="https://truenqh.github.io/chatbot-cdn/image/cb.png" alt="Chat"">`;
+    button.innerHTML = `<img src="https://truenqh.github.io/chatbot-cdn/image/cb.png" alt="Chat" style="width: 60%; height: 60%;">`;
     button.style = `
       position: fixed;
       bottom: 20px;
