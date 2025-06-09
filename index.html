@@ -2,6 +2,8 @@
 <html>
 <head>
   <meta charset="UTF-8" />
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
   <style>
     * {
       box-sizing: border-box;
@@ -139,34 +141,36 @@
     showWelcome();
 
     async function sendMessage() {
-      const msg = msgInput.value.trim();
-      if (!msg) return;
+  const msg = msgInput.value.trim();
+  if (!msg) return;
 
-      chatbox.innerHTML += `<div class="message user">${msg}</div>`;
-      msgInput.value = "";
-      chatbox.scrollTop = chatbox.scrollHeight;
+  chatbox.innerHTML += `<div class="message user">${msg}</div>`;
+  msgInput.value = "";
+  chatbox.scrollTop = chatbox.scrollHeight;
 
-      try {
-        const res = await fetch(url + "/api/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            query: msg,
-            session_id: sessionId || null
-          })
-        });
+  try {
+    const res = await fetch(url + "/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        query: msg,
+        session_id: sessionId || null
+      })
+    });
 
-        const data = await res.json();
-        const reply = data.response || "Xin lỗi, tôi chưa hiểu.";
-        sessionId = data.session_id || sessionId;
+    const data = await res.json();
+    const reply = data.response || "Xin lỗi, tôi chưa hiểu.";
+    sessionId = data.session_id || sessionId;
 
-        chatbox.innerHTML += `<div class="message bot">${reply}</div>`;
-      } catch (err) {
-        chatbox.innerHTML += `<div class="message bot">⚠️ Không thể kết nối tới server.</div>`;
-      }
+    // ✅ Parse markdown
+    const replyHTML = marked.parse(reply);
+    chatbox.innerHTML += `<div class="message bot">${replyHTML}</div>`;
+  } catch (err) {
+    chatbox.innerHTML += `<div class="message bot">⚠️ Không thể kết nối tới server.</div>`;
+  }
 
-      chatbox.scrollTop = chatbox.scrollHeight;
-    }
+  chatbox.scrollTop = chatbox.scrollHeight;
+}
 
     msgInput.addEventListener("keypress", e => {
       if (e.key === "Enter") sendMessage();
